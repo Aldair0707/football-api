@@ -57,7 +57,7 @@ public class WebSecurityConfig {
     return new BCryptPasswordEncoder();
   }
 
-  
+  /*
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
@@ -73,8 +73,10 @@ public class WebSecurityConfig {
         .requestMatchers("/api/comentarios/**").permitAll()
         .requestMatchers("/api/reacciones/**").permitAll()
         .anyRequest().authenticated()
-      ); 
-  /*@Bean
+      );
+  */
+
+  @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.csrf(csrf -> csrf.disable())
         .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
@@ -86,7 +88,7 @@ public class WebSecurityConfig {
               .requestMatchers("/api/reacciones/**").permitAll()
               .requestMatchers("/api/comentarios/**").permitAll()
               .anyRequest().authenticated()
-        );*/
+        );
 
     http.authenticationProvider(authenticationProvider());
     http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -94,7 +96,7 @@ public class WebSecurityConfig {
     return http.build();
   }
   
-  
+  /*
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration config = new CorsConfiguration();
@@ -107,5 +109,5 @@ public class WebSecurityConfig {
     source.registerCorsConfiguration("/**", config);
     return source;
   }
-  
+  */
 }

@@ -2,13 +2,16 @@ package com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplic
 
 import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.models.Publicacion;
 import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.models.User;
+import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.payload.request.PublicacionRequest;
 import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.payload.response.PublicacionResponse;
 import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.repository.PublicacionRepository;
 import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.repository.UserRepository;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;  // Asegúrate de que esta importación sea correcta
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,24 +36,25 @@ public class PublicacionController {
 
     // Obtener todas las publicaciones paginadas
     @GetMapping("/all")
-public ResponseEntity<List<PublicacionResponse>> obtenerTodasPublicaciones(Pageable pageable) {
-    Page<Publicacion> publicaciones = publicacionRepository.findAll(pageable);
+public ResponseEntity<Page<PublicacionResponse>> obtenerTodasPublicaciones(Pageable pageable) {
+    Page<Publicacion> publicaciones = publicacionRepository.findAll(
+        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Order.desc("fechaCreacion")))); // Modificado para ordenar por fechaCreacion
 
-    List<PublicacionResponse> respuesta = publicaciones.getContent().stream()
-            .map(p -> new PublicacionResponse(
-                    p.getId(),
-                    p.getContenido(),
-                    p.getPostedBy().getUsername(),
-                    p.getFechaCreacion()
-            ))
-            .collect(Collectors.toList());
+    Page<PublicacionResponse> respuesta = publicaciones.map(p -> new PublicacionResponse(
+        p.getId(),
+        p.getContenido(),
+        p.getPostedBy().getUsername(),
+        p.getFechaCreacion()
+    ));
 
     return ResponseEntity.ok(respuesta);
 }
 
     // Crear una nueva publicación
     @PostMapping("/crear")
-    public ResponseEntity<?> crearPublicacion(@Valid @RequestBody Publicacion publicacionRequest) {
+    public ResponseEntity<?> crearPublicacion(@Valid @RequestBody PublicacionRequest publicacionRequest) {
+        System.out.println("Contenido recibido: " + publicacionRequest.getContenido());
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
