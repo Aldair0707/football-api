@@ -75,7 +75,7 @@ public class WebSecurityConfig {
         .anyRequest().authenticated()
       );
   */
-
+  /*
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.csrf(csrf -> csrf.disable())
@@ -95,19 +95,67 @@ public class WebSecurityConfig {
 
     return http.build();
   }
+  */
+
+/* 
+  @Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http.csrf(csrf -> csrf.disable())
+        .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(auth ->
+            auth.requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/test/**").permitAll()
+                .requestMatchers("/api/publicaciones/**").permitAll()
+                .requestMatchers("/api/reacciones/**").permitAll()
+                .requestMatchers("/api/comentarios/**").authenticated()
+                .anyRequest().authenticated()
+        )
+        // Configuración de CORS
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()));
+
+    http.authenticationProvider(authenticationProvider());
+    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+    return http.build();
+}
+
   
-  /*
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration config = new CorsConfiguration();
     config.setAllowedOrigins(List.of("http://localhost:4200")); 
     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-    config.setAllowedHeaders(List.of("*"));
+    config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
     config.setAllowCredentials(true);
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", config);
     return source;
   }
+
   */
+
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+   http.csrf(csrf -> csrf.disable())
+       .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+       .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+       .authorizeHttpRequests(auth ->
+         auth.requestMatchers("/api/auth/**").permitAll()
+             .requestMatchers("/api/test/**").permitAll()
+             .requestMatchers("/api/publicaciones/**").permitAll()
+             .requestMatchers("/api/reacciones/**").permitAll()
+             .requestMatchers("/api/comentarios/**").permitAll()
+             .anyRequest().authenticated()
+       );
+  
+   http.authenticationProvider(authenticationProvider());
+
+
+   http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+    
+    return http.build();
+  }
+  
 }

@@ -32,7 +32,7 @@ import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplica
 
 import jakarta.validation.Valid;
 
-//@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {

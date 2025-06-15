@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/reacciones")
-//@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class ReaccionController {
 
     @Autowired
@@ -75,15 +75,15 @@ public class ReaccionController {
     }
 
     @GetMapping("/contador/{publicacionId}")
-    public ResponseEntity<ReaccionContadorResponse> contarPorTipo(@PathVariable Long publicacionId) {
+    public ResponseEntity<ReaccionContadorResponse> contarReacciones(@PathVariable Long publicacionId) {
         Optional<Publicacion> pubOpt = publicacionRepository.findById(publicacionId);
         if (pubOpt.isEmpty()) {
-        return ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build();
         }
 
         Publicacion publicacion = pubOpt.get();
 
-        // Crear mapa para guardar conteo por tipo
+        // Crear mapa para guardar el conteo por tipo
         Map<String, Long> conteo = new HashMap<>();
         for (EReaction tipo : EReaction.values()) {
             Long cantidad = reaccionRepository.countByPublicacionAndDescription(publicacion, tipo);
