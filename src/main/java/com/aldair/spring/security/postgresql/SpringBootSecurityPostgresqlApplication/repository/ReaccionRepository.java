@@ -20,4 +20,6 @@ public interface ReaccionRepository extends JpaRepository<Reaccion, Long> {
 
     // Contar reacciones por tipo para una publicación
     Long countByPublicacionAndDescription(Publicacion publicacion, EReaction description);
+
+ 
 }

@@ -22,21 +22,16 @@ public class TweetReaction {
     private Long tweetId;
 
     @ManyToOne
-    @MapsId("userId")
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", insertable = false, updatable = false) // Relación con User
     private User user;
 
     @ManyToOne
-    @MapsId("tweetId")
-    @JoinColumn(name = "tweet_id")
+    @JoinColumn(name = "tweet_id", insertable = false, updatable = false) // Relación con Publicacion
     private Publicacion tweet;
 
     @ManyToOne
-    @MapsId("reactionId")
-    @JoinColumn(name = "reaction_id")
+    @JoinColumn(name = "reaction_id", insertable = false, updatable = false) // Relación con Reaccion
     private Reaccion reaction;
-
-    // Getters y Setters
 
     public Long getId() {
         return id;
@@ -75,7 +70,6 @@ public class TweetReaction {
     }
 
     public void setUser(User user) {
-        this.userId = user.getId();
         this.user = user;
     }
 
@@ -84,7 +78,6 @@ public class TweetReaction {
     }
 
     public void setTweet(Publicacion tweet) {
-        this.tweetId = tweet.getId();
         this.tweet = tweet;
     }
 
@@ -93,7 +86,10 @@ public class TweetReaction {
     }
 
     public void setReaction(Reaccion reaction) {
-        this.reactionId = reaction.getDescription().name();  // Asignamos el nombre de la reacción
         this.reaction = reaction;
     }
+
+    // Getters y Setters
+
+    
 }

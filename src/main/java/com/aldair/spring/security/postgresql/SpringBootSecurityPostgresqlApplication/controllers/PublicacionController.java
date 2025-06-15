@@ -1,12 +1,15 @@
 package com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.controllers;
 
 import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.models.Publicacion;
+import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.models.TweetReaction;
 import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.models.User;
 import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.payload.request.PublicacionRequest;
 import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.payload.response.PublicacionResponse;
 import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.repository.PublicacionRepository;
+import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.repository.TweetReactionRepository;
 import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;  // Asegúrate de que esta importación sea correcta
@@ -33,6 +36,9 @@ public class PublicacionController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TweetReactionRepository tweetReactionRepository;
 
     // Obtener todas las publicaciones paginadas
     @GetMapping("/all")
@@ -134,28 +140,59 @@ public ResponseEntity<Page<PublicacionResponse>> obtenerTodasPublicaciones(Pagea
     }
 
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<?> eliminarPublicacion(@PathVariable Long id) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
+@DeleteMapping("/{id}")
+@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+@Transactional  // Asegura que esta operación esté en una transacción
+public ResponseEntity<?> eliminarPublicacion(@PathVariable Long id) {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    String username = auth.getName();
 
-        Optional<Publicacion> pubOpt = publicacionRepository.findById(id);
-        if (pubOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Publicacion pub = pubOpt.get();
-
-        // Verifica si el usuario actual es el autor o es admin
-        if (!pub.getPostedBy().getUsername().equals(username) &&
-            auth.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            return ResponseEntity.status(403).body("No tienes permiso para eliminar esta publicación");
-        }   
-
-        publicacionRepository.delete(pub);
-        return ResponseEntity.ok("Publicación eliminada con éxito");
+    // Verificar si la publicación existe
+    Optional<Publicacion> publicacionOpt = publicacionRepository.findById(id);
+    if (publicacionOpt.isEmpty()) {
+        return ResponseEntity.notFound().build();
     }
+
+    Publicacion publicacion = publicacionOpt.get();
+
+    // Verificar si el usuario tiene permiso para eliminar la publicación
+    if (!publicacion.getPostedBy().getUsername().equals(username) &&
+        auth.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+        return ResponseEntity.status(403).body("No tienes permiso para eliminar esta publicación");
+    }
+
+    // Eliminar todas las reacciones asociadas a la publicación/tweet
+    tweetReactionRepository.deleteByTweetId(id);  // Método en el repositorio para eliminar las reacciones
+
+    // Eliminar la publicación
+    publicacionRepository.delete(publicacion);
+
+    return ResponseEntity.ok("Publicación eliminada con éxito");
+}
+
+
+ 
+@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+@GetMapping("/publicaciones/{id}/owner")
+public ResponseEntity<Boolean> checkPublicacionOwner(@PathVariable Long id) {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    String username = auth.getName(); // Obtener el nombre de usuario autenticado
+
+    Optional<Publicacion> publicacionOpt = publicacionRepository.findById(id);
+    if (publicacionOpt.isEmpty()) {
+        return ResponseEntity.notFound().build(); // Si no existe el tweet, retornamos 404
+    }
+
+    Publicacion publicacion = publicacionOpt.get();
+
+        // Verificar si el usuario es el propietario o tiene permisos de admin
+        boolean isOwner = publicacion.getPostedBy().getUsername().equals(username) ||
+                          auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        return ResponseEntity.ok(isOwner);
+}
+
+
 
 
 }

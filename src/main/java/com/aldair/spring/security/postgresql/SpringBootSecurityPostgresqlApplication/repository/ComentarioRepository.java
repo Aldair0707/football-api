@@ -9,4 +9,7 @@ import java.util.List;
 
 public interface ComentarioRepository extends JpaRepository<Comentario, Long> {
     List<Comentario> findByPublicacion(Publicacion publicacion);
+
+    void deleteByPublicacionId(Long publicacionId);
+
 }

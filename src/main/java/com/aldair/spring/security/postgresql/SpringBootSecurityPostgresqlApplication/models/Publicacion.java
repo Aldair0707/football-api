@@ -1,11 +1,16 @@
 package com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.models;
 
+import java.util.HashSet;
+import java.util.Set;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 @Entity
 @Table(name = "publicaciones")
 public class Publicacion {
@@ -24,6 +29,16 @@ public class Publicacion {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     private User postedBy;
+     
+    @JsonIgnore
+    @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Comentario> comentarios = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Reaccion> reacciones = new HashSet<>();
+
+
 
     public Publicacion() {}
 
@@ -64,4 +79,22 @@ public class Publicacion {
     public void setPostedBy(User postedBy) {
         this.postedBy = postedBy;
     }
+
+    public Set<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(Set<Comentario> comentarios) {
+        this.comentarios = comentarios;
+    }
+
+    public Set<Reaccion> getReacciones() {
+        return reacciones;
+    }
+
+    public void setReacciones(Set<Reaccion> reacciones) {
+        this.reacciones = reacciones;
+    }
+
+    
 }
