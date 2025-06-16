@@ -1,12 +1,11 @@
 package com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.controllers;
 
 import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.models.Publicacion;
-import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.models.TweetReaction;
-import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.models.User;
+ import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.models.User;
 import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.payload.request.PublicacionRequest;
 import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.payload.response.PublicacionResponse;
 import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.repository.PublicacionRepository;
-import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.repository.TweetReactionRepository;
+import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.repository.ReaccionRepository;
 import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -38,7 +37,7 @@ public class PublicacionController {
     private UserRepository userRepository;
 
     @Autowired
-    private TweetReactionRepository tweetReactionRepository;
+    private ReaccionRepository reaccionRepository;
 
     // Obtener todas las publicaciones paginadas
     @GetMapping("/all")
@@ -162,7 +161,7 @@ public ResponseEntity<?> eliminarPublicacion(@PathVariable Long id) {
     }
 
     // Eliminar todas las reacciones asociadas a la publicación/tweet
-    tweetReactionRepository.deleteByTweetId(id);  // Método en el repositorio para eliminar las reacciones
+    reaccionRepository.deleteByPublicacionId(id);  // Método en el repositorio para eliminar las reacciones
 
     // Eliminar la publicación
     publicacionRepository.delete(publicacion);

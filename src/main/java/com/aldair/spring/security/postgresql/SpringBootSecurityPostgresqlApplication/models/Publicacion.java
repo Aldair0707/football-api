@@ -21,7 +21,7 @@ public class Publicacion {
 
     @NotBlank
     @Size(max = 280) //estilo clásico
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false, length = 400)
     private String contenido;
 
     private LocalDateTime fechaCreacion = LocalDateTime.now();

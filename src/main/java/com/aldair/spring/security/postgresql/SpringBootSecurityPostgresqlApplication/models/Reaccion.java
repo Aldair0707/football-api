@@ -3,7 +3,7 @@ package com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplic
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "reacciones")
+@Table(name = "reacciones")  // Define el nombre de la tabla en la base de datos
 public class Reaccion {
 
     @Id
@@ -11,22 +11,15 @@ public class Reaccion {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 20, nullable = false)
-    private EReaction description;
+    private EReaction tipo; // Puede ser LIKE, LOVE, SAD, etc.
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id")
-    private User usuario;
+    @JoinColumn(name = "user_id")
+    private User usuario; // Relación con el usuario que reaccionó
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "publicacion_id")
-    private Publicacion publicacion;
-
-    public Reaccion() {}
-
-    public Reaccion(EReaction description) {
-        this.description = description;
-    }
+    private Publicacion publicacion; // Relación con la publicación a la que se reaccionó
 
     public Long getId() {
         return id;
@@ -36,12 +29,12 @@ public class Reaccion {
         this.id = id;
     }
 
-    public EReaction getDescription() {
-        return description;
+    public EReaction getTipo() {
+        return tipo;
     }
 
-    public void setDescription(EReaction description) {
-        this.description = description;
+    public void setTipo(EReaction tipo) {
+        this.tipo = tipo;
     }
 
     public User getUsuario() {
@@ -60,5 +53,8 @@ public class Reaccion {
         this.publicacion = publicacion;
     }
 
+    // Getters y setters
+
     
 }
+

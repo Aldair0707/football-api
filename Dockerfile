@@ -1,13 +1,11 @@
-FROM openjdk:22-rc-oracle
+FROM eclipse-temurin:21-jdk
 
-LABEL maintainer="aldair@gmail.com"
+WORKDIR /app
 
-VOLUME /tmp
+COPY target/*.jar app.jar
 
-EXPOSE 8080
+ENV DB_URL=""
+ENV DB_USERNAME=""
+ENV DB_PASSWORD=""
 
-ARG JAR_FILE=target/SpringBootSecurityPostgresqlApplication-0.0.1-SNAPSHOT.jar
-ADD ${JAR_FILE} antlr-api.jar
-
-#RUN
-ENTRYPOINT  ["java",  "-Djava.security.egd=file:/dev/./urandom", "-jar", "/antlr-api.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

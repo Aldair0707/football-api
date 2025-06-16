@@ -1,5 +1,5 @@
 package com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.repository;
-
+/*
 import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.models.TweetReaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -30,3 +30,4 @@ public interface TweetReactionRepository extends JpaRepository<TweetReaction, Lo
     List<TweetReaction> findByTweetId(Long tweetId);
     
 }
+*/
