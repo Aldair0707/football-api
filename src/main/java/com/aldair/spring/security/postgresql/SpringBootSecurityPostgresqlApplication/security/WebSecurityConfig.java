@@ -16,9 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+ 
 
 import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.security.jwt.AuthEntryPointJwt;
 import com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.security.jwt.AuthTokenFilter;
@@ -57,85 +55,7 @@ public class WebSecurityConfig {
     return new BCryptPasswordEncoder();
   }
 
-  /*
-  @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http
-      .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-      .csrf(csrf -> csrf.disable())
-      .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
-      .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-      .authorizeHttpRequests(auth -> auth
-        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
-        .requestMatchers("/api/auth/**").permitAll()
-        .requestMatchers("/api/test/**").permitAll()
-        .requestMatchers("/api/publicaciones/**").permitAll()
-        .requestMatchers("/api/comentarios/**").permitAll()
-        .requestMatchers("/api/reacciones/**").permitAll()
-        .anyRequest().authenticated()
-      );
-  */
-  /*
-  @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.csrf(csrf -> csrf.disable())
-        .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(auth -> 
-          auth.requestMatchers("/api/auth/**").permitAll()
-              .requestMatchers("/api/test/**").permitAll()
-              .requestMatchers("/api/publicaciones/**").permitAll()
-              .requestMatchers("/api/reacciones/**").permitAll()
-              .requestMatchers("/api/comentarios/**").permitAll()
-              .anyRequest().authenticated()
-        );
-
-    http.authenticationProvider(authenticationProvider());
-    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
-    return http.build();
-  }
-  */
-
-/* 
-  @Bean
-public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.csrf(csrf -> csrf.disable())
-        .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(auth ->
-            auth.requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/test/**").permitAll()
-                .requestMatchers("/api/publicaciones/**").permitAll()
-                .requestMatchers("/api/reacciones/**").permitAll()
-                .requestMatchers("/api/comentarios/**").authenticated()
-                .anyRequest().authenticated()
-        )
-        // Configuración de CORS
-        .cors(cors -> cors.configurationSource(corsConfigurationSource()));
-
-    http.authenticationProvider(authenticationProvider());
-    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
-    return http.build();
-}
-
-  
-  @Bean
-  public CorsConfigurationSource corsConfigurationSource() {
-    CorsConfiguration config = new CorsConfiguration();
-    config.setAllowedOrigins(List.of("http://localhost:4200")); 
-    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-    config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-    config.setAllowCredentials(true);
-
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", config);
-    return source;
-  }
-
-  */
-
+   
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
    http.csrf(csrf -> csrf.disable())

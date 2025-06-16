@@ -1,5 +1,5 @@
 package com.aldair.spring.security.postgresql.SpringBootSecurityPostgresqlApplication.payload.response;
-
+/*
 public class TweetReactionResponse {
 
     private Long id;
@@ -37,4 +37,4 @@ public class TweetReactionResponse {
     public void setUsername(String username) {
         this.username = username;
     }
-}
+}*/

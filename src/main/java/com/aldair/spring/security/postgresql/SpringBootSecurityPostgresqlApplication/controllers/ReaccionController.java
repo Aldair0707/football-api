@@ -34,7 +34,7 @@ public class ReaccionController {
     @Autowired
     private UserRepository userRepository;
 
-    // Crear o actualizar una reacción
+    // crear o actualizar una reacción
     @PostMapping("/crear")
     public ResponseEntity<?> reaccionar(@Valid @RequestBody ReaccionRequest request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -47,20 +47,20 @@ public class ReaccionController {
             return ResponseEntity.badRequest().body("Usuario o publicación no encontrada");
         }
 
-        // Verifica si ya existe una reacción de este usuario a esta publicación
+        // verifica si ya existe una reacción de este usuario a esta publicación
         Optional<Reaccion> existente = reaccionRepository.findByPublicacionAndUsuario(pubOpt.get(), userOpt.get());
         Reaccion reaccion = existente.orElse(new Reaccion());
         reaccion.setTipo(request.getTipo());
         reaccion.setUsuario(userOpt.get());
         reaccion.setPublicacion(pubOpt.get());
 
-        // Guardar o actualizar la reacción
+        // guarda o actualizar la reacción
         reaccionRepository.save(reaccion);
 
         return ResponseEntity.ok(new ReaccionResponse(request.getTipo(), username));
     }
 
-    // Obtener las reacciones de una publicación
+    // obtener las reacciones de una publicación
     @GetMapping("/publicacion/{id}")
     public ResponseEntity<List<ReaccionResponse>> obtenerReacciones(@PathVariable Long id) {
         Optional<Publicacion> pubOpt = publicacionRepository.findById(id);
@@ -77,7 +77,7 @@ public class ReaccionController {
         return ResponseEntity.ok(response);
     }
 
-    // Contar reacciones por tipo para una publicación
+    // contar reacciones por tipo para una publicación
     @GetMapping("/contador/{publicacionId}")
     public ResponseEntity<ReaccionContadorResponse> contarReacciones(@PathVariable Long publicacionId) {
         Optional<Publicacion> pubOpt = publicacionRepository.findById(publicacionId);
@@ -102,7 +102,7 @@ public class ReaccionController {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     String username = auth.getName();
 
-    // Verificar si la publicación existe
+    // verifica si la publicación existe
     Optional<Publicacion> publicacionOpt = publicacionRepository.findById(publicacionId);
     if (publicacionOpt.isEmpty()) {
         return ResponseEntity.notFound().build();
@@ -110,26 +110,26 @@ public class ReaccionController {
 
     Publicacion publicacion = publicacionOpt.get();
 
-    // Verificar si el usuario ya reaccionó
+    // verifica si el usuario ya reaccionó
     Optional<Reaccion> reaccionOpt = reaccionRepository.findByPublicacionAndUsuario(publicacion, userRepository.findByUsername(username).get());
     if (reaccionOpt.isEmpty()) {
         return ResponseEntity.badRequest().body("Reacción no encontrada");
     }
 
-    // Verificar si la reacción coincide con el tipo enviado (usando el enum EReaction)
+    // verifica si la reacción coincide con el tipo enviado (usando el enum EReaction)
     try {
-        EReaction reaccionTipo = EReaction.valueOf(tipo);  // Convierte el tipo a enum
+        EReaction reaccionTipo = EReaction.valueOf(tipo);  // convierte el tipo a enum
         Reaccion reaccion = reaccionOpt.get();
         if (!reaccion.getTipo().equals(reaccionTipo)) {
             return ResponseEntity.badRequest().body("Tipo de reacción no coincide");
         }
 
-        // Eliminar la reacción
+        // eliminar la reacción
         reaccionRepository.delete(reaccion);
         return ResponseEntity.ok("Reacción eliminada con éxito");
 
     } catch (IllegalArgumentException e) {
-        // Si el tipo de reacción no es válido
+        // si el tipo de reacción no es válido
         return ResponseEntity.badRequest().body("Tipo de reacción no válido");
     }
 }
